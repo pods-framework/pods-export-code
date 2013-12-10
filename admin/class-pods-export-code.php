@@ -134,6 +134,9 @@ class Pods_Export_Code_Admin {
 			// Insert our menu item after pods components
 			if ( isset( $this_menu_item[ 'access' ] ) && 'pods_components' == $this_menu_item[ 'access' ] ) {
 				$new_menus[ $this->plugin_slug ] = $plugin_menu;
+
+				// ToDo: Proper way to do this?
+				$this->plugin_screen_hook_suffix = 'pods-admin_page_' . $this->plugin_slug;
 			}
 		}
 

@@ -1,1 +1,20 @@
-/* This stylesheet is used to style the admin option form of the plugin. */
+.stuffbox.pods-export-code {
+	width: 782px;
+	margin: 15px 15px 0 0;
+}
+
+.stuffbox.pods-export-code h3 {
+	font-size: 15px;
+	font-weight: normal;
+	line-height: 1;
+	padding: 7px 10px;
+	font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+}
+
+.stuffbox.pods-export-code .submit {
+	clear: both;
+}
+
+.pods-export-code div.pods-manage-field .pods-field-option-group {
+	padding-top: 0;
+}

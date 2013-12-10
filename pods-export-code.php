@@ -31,10 +31,10 @@ if ( !defined( 'WPINC' ) ) {
 
 // ToDo: exit or take other action if Pods is not activated
 
-	/*----------------------------------------------------------------------------*
-	 * Public-Facing Functionality
-	 *----------------------------------------------------------------------------*/
-	require_once( plugin_dir_path( __FILE__ ) . 'public/class-pods-export-code.php' );
+/*----------------------------------------------------------------------------*
+ * Public-Facing Functionality
+ *----------------------------------------------------------------------------*/
+require_once( plugin_dir_path( __FILE__ ) . 'public/class-pods-export-code.php' );
 
 /*
  * Register hooks that are fired when the plugin is activated or deactivated.
@@ -61,6 +61,7 @@ add_action( 'plugins_loaded', array( 'Pods_Export_Code', 'get_instance' ) );
  */
 if ( is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) ) {
 
+	require_once( plugin_dir_path( __FILE__ ) . 'admin/classes/pods-export-code-api.php');
 	require_once( plugin_dir_path( __FILE__ ) . 'admin/class-pods-export-code.php' );
 	add_action( 'plugins_loaded', array( 'Pods_Export_Code_Admin', 'get_instance' ) );
 

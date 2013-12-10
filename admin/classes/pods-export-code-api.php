@@ -41,7 +41,7 @@ class Pods_Export_Code_API {
 
 		// Output the pods_register_type() call
 		$output .= sprintf( "\$pod = %s;\n\n", var_export( $pod, true ) );
-		$output .= sprintf( "pods_register_type( '%s', '%s', \$pod );\n\n", $pod[ 'type' ], $pod[ 'name' ] );
+		$output .= sprintf( "pods_register_type( '%s', '%s', \$pod );\n\n", $pod[ 'type' ], $pod_name );
 
 		// Output a pods_register_field() call for each field
 		$fields = $this->api->load_fields( array( 'pod' => $pod_name ) );
