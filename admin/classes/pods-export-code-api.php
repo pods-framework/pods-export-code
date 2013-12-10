@@ -35,7 +35,7 @@ class Pods_Export_Code_API {
 		$pod = $this->api->load_pod( $params );
 
 		// We only support meta-based Pods
-		if ( 'meta' != $pod[ 'storage' ] ) {
+		if ( 'table' == $pod[ 'storage' ] ) {
 			return $output;
 		}
 

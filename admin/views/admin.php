@@ -35,7 +35,7 @@
 								foreach ( $pods as $this_pod ) {
 
 									// We only support meta-based Pods
-									if ( 'meta' != $this_pod[ 'storage' ] ) {
+									if ( 'table' != $this_pod[ 'storage' ] ) {
 										continue;
 									}
 
@@ -59,7 +59,7 @@
 		</form>
 	</div>
 <?php
-/*
+
 $export_to_code = new Pods_Export_Code_API();
 $api = pods_api();
 
@@ -68,4 +68,3 @@ $pods = $api->load_pods( array( 'names' => true ) );
 foreach ( $pods as $this_pod => $label ) {
 	echo "<pre>" . $export_to_code->export_pod( $this_pod ) . "</pre>";
 }
-*/
