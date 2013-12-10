@@ -41,7 +41,6 @@ class Pods_Export_Code_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
 		// Hook into the pods admin menu
-		//add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 		add_filter( 'pods_admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
 		// Add an action link pointing to the options page.
@@ -108,32 +107,31 @@ class Pods_Export_Code_Admin {
 	}
 
 	/**
+	 * Hooks the 'pods_admin_menu' filter
+	 *
 	 * @param $admin_menus
 	 *
 	 * @return array
 	 */
 	public function add_plugin_admin_menu ( $admin_menus ) {
 
-		/*
-		 $this->plugin_screen_hook_suffix = add_options_page(
-			 __( 'Pods Export to Code', $this->plugin_slug ),
-			 __( 'Menu Text', $this->plugin_slug ),
-			 'manage_options',
-			 $this->plugin_slug,
-			 array( $this, 'display_plugin_admin_page' )
-		 );
+		// Fresh array to insert our new menu item
+		$new_menus = array();
 
-		return;
-		*/
-
+		// New menu item to insert
 		$plugin_menu = array(
 			'label'    => 'Export to Code',
 			'function' => array( $this, 'display_plugin_admin_page' ),
 			'access'   => $this->plugin_slug
 		);
-		$new_menus = array();
+
+		// Loop through the Pods menu items looking for the target to insert after
 		foreach ( $admin_menus as $key => $this_menu_item ) {
+
+			// Copy all the menu items
 			$new_menus[ $key ] = $this_menu_item;
+
+			// Insert our menu item after pods components
 			if ( isset( $this_menu_item[ 'access' ] ) && 'pods_components' == $this_menu_item[ 'access' ] ) {
 				$new_menus[ $this->plugin_slug ] = $plugin_menu;
 			}
