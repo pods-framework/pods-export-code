@@ -35,7 +35,7 @@
 								foreach ( $pods as $this_pod ) {
 
 									// We only support meta-based Pods
-									if ( 'table' != $this_pod[ 'storage' ] ) {
+									if ( 'table' == $this_pod[ 'storage' ] ) {
 										continue;
 									}
 

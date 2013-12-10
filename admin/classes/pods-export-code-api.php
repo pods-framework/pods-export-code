@@ -30,7 +30,7 @@ class Pods_Export_Code_API {
 		// ToDo: test with bad pod names
 		$params = array(
 			'name'   => $pod_name,
-			'fields' => false,
+			'fields' => true,
 		);
 		$pod = $this->api->load_pod( $params );
 
