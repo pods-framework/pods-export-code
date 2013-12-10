@@ -28,7 +28,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since     1.0.0
 	 */
-	private function __construct() {
+	private function __construct () {
 
 		/*
 		 * Call $plugin_slug from public plugin class.
@@ -40,21 +40,13 @@ class Pods_Export_Code_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
-		// Add the options page and menu item.
-		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+		// Hook into the pods admin menu
+		//add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+		add_filter( 'pods_admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
 		// Add an action link pointing to the options page.
 		$plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->plugin_slug . '.php' );
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
-
-		/*
-		 * Define custom functionality.
-		 *
-		 * Read more about actions and filters:
-		 * http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters
-		 */
-		add_action( '@TODO', array( $this, 'action_method_name' ) );
-		add_filter( '@TODO', array( $this, 'filter_method_name' ) );
 
 	}
 
@@ -65,16 +57,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    object    A single instance of this class.
 	 */
-	public static function get_instance() {
-
-		/*
-		 * @TODO :
-		 *
-		 * - Uncomment following lines if the admin class should only be available for super admins
-		 */
-		/* if( ! is_super_admin() ) {
-			return;
-		} */
+	public static function get_instance () {
 
 		// If the single instance hasn't been set, set it now.
 		if ( null == self::$instance ) {
@@ -91,15 +74,15 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
-	public function enqueue_admin_styles() {
+	public function enqueue_admin_styles () {
 
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( !isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
 		$screen = get_current_screen();
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
-			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'assets/css/admin.css', __FILE__ ), array(), Pods_Export_Code::VERSION );
+			wp_enqueue_style( $this->plugin_slug . '-admin-styles', plugins_url( 'assets/css/admin.css', __FILE__ ), array(), Pods_Export_Code::VERSION );
 		}
 
 	}
@@ -111,9 +94,9 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
-	public function enqueue_admin_scripts() {
+	public function enqueue_admin_scripts () {
 
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( !isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
@@ -125,28 +108,38 @@ class Pods_Export_Code_Admin {
 	}
 
 	/**
-	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
+	 * @param $admin_menus
 	 *
-	 * @since    1.0.0
+	 * @return array
 	 */
-	public function add_plugin_admin_menu() {
+	public function add_plugin_admin_menu ( $admin_menus ) {
 
 		/*
-		 * Add a settings page for this plugin to the Settings menu.
-		 *
-		 * NOTE:  Alternative menu locations are available via WordPress administration menu functions.
-		 *
-		 *        Administration Menus: http://codex.wordpress.org/Administration_Menus
-		 *
-		 */
-		$this->plugin_screen_hook_suffix = add_options_page(
-			__( 'Pods Export to Code', $this->plugin_slug ),
-			__( 'Menu Text', $this->plugin_slug ),
-			'manage_options',
-			$this->plugin_slug,
-			array( $this, 'display_plugin_admin_page' )
-		);
+		 $this->plugin_screen_hook_suffix = add_options_page(
+			 __( 'Pods Export to Code', $this->plugin_slug ),
+			 __( 'Menu Text', $this->plugin_slug ),
+			 'manage_options',
+			 $this->plugin_slug,
+			 array( $this, 'display_plugin_admin_page' )
+		 );
 
+		return;
+		*/
+
+		$plugin_menu = array(
+			'label'    => 'Export to Code',
+			'function' => array( $this, 'display_plugin_admin_page' ),
+			'access'   => $this->plugin_slug
+		);
+		$new_menus = array();
+		foreach ( $admin_menus as $key => $this_menu_item ) {
+			$new_menus[ $key ] = $this_menu_item;
+			if ( isset( $this_menu_item[ 'access' ] ) && 'pods_components' == $this_menu_item[ 'access' ] ) {
+				$new_menus[ $this->plugin_slug ] = $plugin_menu;
+			}
+		}
+
+		return $new_menus;
 	}
 
 	/**
@@ -154,7 +147,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function display_plugin_admin_page() {
+	public function display_plugin_admin_page () {
 		include_once( 'views/admin.php' );
 	}
 
@@ -163,7 +156,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_action_links( $links ) {
+	public function add_action_links ( $links ) {
 
 		return array_merge(
 			array(
@@ -183,7 +176,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function action_method_name() {
+	public function action_method_name () {
 		// @TODO: Define your action hook callback here
 	}
 
@@ -196,7 +189,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function filter_method_name() {
+	public function filter_method_name () {
 		// @TODO: Define your filter hook callback here
 	}
 
