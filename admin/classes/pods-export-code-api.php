@@ -42,6 +42,8 @@ class Pods_Export_Code_API {
 		// Pull out the field list
 		$fields = $pod[ 'fields' ];
 		unset( $pod[ 'fields' ] );
+		unset( $pod[ 'object_fields' ] );
+		unset( $pod[ 'id' ] );
 
 		// Output the pods_register_type() call
 		$output .= sprintf( "\$pod = %s;\n\n", var_export( $pod, true ) );

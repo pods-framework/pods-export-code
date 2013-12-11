@@ -47,6 +47,8 @@ class Pods_Export_Code_Admin {
 		$plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->plugin_slug . '.php' );
 		add_filter( 'plugin_action_links_' . $plugin_basename, array( $this, 'add_action_links' ) );
 
+		// Ajax handler
+		add_action( 'wp_ajax_pods_export_code', array( $this, 'pods_export_code' ) );
 	}
 
 	/**
@@ -169,29 +171,24 @@ class Pods_Export_Code_Admin {
 	}
 
 	/**
-	 * NOTE:     Actions are points in the execution of a page or process
-	 *           lifecycle that WordPress fires.
-	 *
-	 *           Actions:    http://codex.wordpress.org/Plugin_API#Actions
-	 *           Reference:  http://codex.wordpress.org/Plugin_API/Action_Reference
-	 *
-	 * @since    1.0.0
+	 * AJAX handler
 	 */
-	public function action_method_name () {
-		// @TODO: Define your action hook callback here
-	}
+	public function pods_export_code () {
 
-	/**
-	 * NOTE:     Filters are points of execution in which WordPress modifies data
-	 *           before saving it or sending it to the browser.
-	 *
-	 *           Filters: http://codex.wordpress.org/Plugin_API#Filters
-	 *           Reference:  http://codex.wordpress.org/Plugin_API/Filter_Reference
-	 *
-	 * @since    1.0.0
-	 */
-	public function filter_method_name () {
-		// @TODO: Define your filter hook callback here
-	}
+		if ( !isset( $_POST[ 'pod_names' ] ) ) {
+			die();
+		}
+		$pod_names = $_POST[ 'pod_names' ];
 
+		if ( !is_array( $pod_names ) ) {
+			die();
+		}
+
+		$export_to_code = new Pods_Export_Code_API();
+		foreach ( $pod_names as $this_pod ) {
+			echo $export_to_code->export_pod( $this_pod );
+		}
+
+		die();
+	}
 }

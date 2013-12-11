@@ -43,7 +43,7 @@
 									$zebra = ( !$zebra );
 									?>
 									<li class="pods-zebra-<?php echo $class; ?>">
-										<?php echo PodsForm::field( 'pods' . '[' . $this_pod[ 'id' ] . ']', true, 'boolean', array( 'boolean_yes_label' => $this_pod[ 'name' ] . ( !empty( $this_pod[ 'label' ] ) ? ' (' . $this_pod[ 'label' ] . ')' : '' ) ) ); ?>
+										<?php echo PodsForm::field( $this_pod['name'], true, 'boolean', array( 'boolean_yes_label' => $this_pod[ 'name' ] . ( !empty( $this_pod[ 'label' ] ) ? ' (' . $this_pod[ 'label' ] . ')' : '' ) ) ); ?>
 									</li>
 								<?php
 								}
@@ -53,18 +53,9 @@
 						<div class="submit">
 							<a class="button button-primary" id="export" href="#"> Export </a>
 						</div>
+						<textarea id="feedback"></textarea>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
-<?php
-
-$export_to_code = new Pods_Export_Code_API();
-$api = pods_api();
-
-$pods = $api->load_pods( array( 'names' => true ) );
-
-foreach ( $pods as $this_pod => $label ) {
-	echo "<pre>" . $export_to_code->export_pod( $this_pod ) . "</pre>";
-}

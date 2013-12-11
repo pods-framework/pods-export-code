@@ -18,3 +18,8 @@
 .pods-export-code div.pods-manage-field .pods-field-option-group {
 	padding-top: 0;
 }
+
+#feedback {
+	width: 100%;
+	height: 400px;
+}
