@@ -1,3 +1,4 @@
+<?php /** @global Pods_Export_Code_Admin $this */ ?>
 <div class="wrap">
 
 	<?php screen_icon( 'options-general' ); ?>
@@ -16,14 +17,8 @@
 					<div class="pods-pick-values pods-pick-checkbox pods-zebra">
 						<ul>
 							<?php
-							$pods = pods_api()->load_pods( array( 'fields' => false ) );
 							$zebra = false;
-							foreach ( $pods as $this_pod ) {
-
-								// We only support meta-based Pods
-								if ( 'table' == $this_pod[ 'storage' ] ) {
-									continue;
-								}
+							foreach ( $this->exportable_pods() as $this_pod ) {
 
 								$class = ( $zebra ? 'even' : 'odd' );
 								$zebra = ( !$zebra );

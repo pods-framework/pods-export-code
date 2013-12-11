@@ -7,8 +7,6 @@ class Pods_Export_Code_Admin {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since    1.0.0
-	 *
 	 * @var      object
 	 */
 	protected static $instance = null;
@@ -16,11 +14,14 @@ class Pods_Export_Code_Admin {
 	/**
 	 * Slug of the plugin screen.
 	 *
-	 * @since    1.0.0
-	 *
 	 * @var      string
 	 */
 	protected $plugin_screen_hook_suffix = null;
+
+	/**
+	 * @var array
+	 */
+	protected $exportable_pods = array();
 
 	/**
 	 * Initialize the plugin by loading admin scripts & styles and adding a
@@ -147,7 +148,22 @@ class Pods_Export_Code_Admin {
 	 * @since    1.0.0
 	 */
 	public function display_plugin_admin_page () {
-		include_once( 'views/admin.php' );
+
+		$this->set_exportable_pods();
+		if ( count( $this->exportable_pods() ) > 0 ) {
+			include_once( 'views/admin.php' );
+		}
+		else {
+			include_once( 'views/admin-no-pods.php' );
+		}
+
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function exportable_pods() {
+		return $this->exportable_pods;
 	}
 
 	/**
@@ -171,4 +187,25 @@ class Pods_Export_Code_Admin {
 
 		die();
 	}
+
+	/**
+	 *
+	 */
+	private function set_exportable_pods() {
+
+		$this->exportable_pods = array();
+
+		$pods = pods_api()->load_pods( array( 'fields' => false ) );
+		foreach ( $pods as $this_pod ) {
+
+			// We only support meta-based Pods
+			if ( 'table' == $this_pod[ 'storage' ] ) {
+				continue;
+			}
+
+			$this->exportable_pods[] = $this_pod;
+		}
+
+	}
+
 }

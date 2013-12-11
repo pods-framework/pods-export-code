@@ -26,16 +26,15 @@ class Pods_Export_Code_API {
 
 		$output = '';
 
-		// Attempt to load the pod
-		// ToDo: test with bad pod names
+		// Attempt to load the pod, don't throw an exception on error
 		$params = array(
 			'name'   => $pod_name,
 			'fields' => true,
 		);
-		$pod = $this->api->load_pod( $params );
+		$pod = $this->api->load_pod( $params, false );
 
-		// We only support meta-based Pods
-		if ( 'table' == $pod[ 'storage' ] ) {
+		// Exit if the pod wasn't found or is table based (not supported)
+		if ( false === $pod || !isset( $pod[ 'storage' ] ) || 'table' == $pod[ 'storage' ] ) {
 			return '';
 		}
 
