@@ -29,8 +29,6 @@ if ( !defined( 'WPINC' ) ) {
 	die;
 }
 
-// ToDo: exit or take other action if Pods is not activated
-
 /*----------------------------------------------------------------------------*
  * Public-Facing Functionality
  *----------------------------------------------------------------------------*/
