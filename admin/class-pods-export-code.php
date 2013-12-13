@@ -181,9 +181,18 @@ class Pods_Export_Code_Admin {
 		}
 
 		$export_to_code = new Pods_Export_Code_API();
+
+		// Output function
+		$function = 'register_my_pods_config_' . rand( 11, rand( 1212, 452452 ) * 651 );
+
+		echo "function {$function}() {\n\n";
+
 		foreach ( $pod_names as $this_pod ) {
 			echo $export_to_code->export_pod( $this_pod );
 		}
+
+		echo "}\n";
+		echo "add_action( 'init', '{$function}' );";
 
 		die();
 	}
