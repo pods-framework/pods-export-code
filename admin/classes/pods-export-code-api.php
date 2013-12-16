@@ -182,17 +182,46 @@ class Pods_Export_Code_API {
 		}
 
 		// Output the pods_register_type() call
-		$output .= sprintf( "\t\$pod = %s;\n\n", preg_replace( '/\d+ => /', '', var_export( $pod, true ) ) );
+		$output .= sprintf( "\t\$pod = %s;\n\n", $this->var_export_format( $pod, 1 ) );
 		$output .= "\tpods_register_type( \$pod[ 'type' ], \$pod[ 'name' ], \$pod );\n\n";
 
 		// Output a pods_register_field() call for each field
 		foreach ( $fields as $this_field ) {
-			$output .= sprintf( "\t\$field = %s;\n\n", preg_replace( '/\d+ => /', '', var_export( $this_field, true ) ) );
+			$output .= sprintf( "\t\$field = %s;\n\n", preg_replace( '/\d+ => /', '', $this->var_export_format( $this_field, 1 ) ) );
 			$output .= "\tpods_register_field( \$pod[ 'name' ], \$field[ 'name' ], \$field );\n\n";
 		}
 
 		return $output;
 
+	}
+
+	/**
+	 * @param mixed $var
+	 * @param int $leading_tabs
+	 *
+	 * @return string
+	 */
+	private function var_export_format( $var, $leading_tabs = 0 ) {
+		$var = var_export( $var, true );
+		$leading_tabs = str_repeat( "\t", $leading_tabs );
+
+		// Convert params like 0 => 'Option 1' to just 'Option 1'
+		$var = preg_replace( '/\d+ => /', '', $var );
+
+		$output = '';
+		foreach( preg_split('~[\r\n]+~', $var ) as $line ){
+
+			// Skip blank lines
+			if( empty($line) || ctype_space( $line ) ) {
+				continue;
+			}
+
+			// Leading tabs plus replace double spaces with tabs
+			$output .= sprintf( "%s%s\n", $leading_tabs, preg_replace( "/ {2}/", "\t", $line ) );
+		}
+
+		// Trim the leading tab and the final newline
+		return ltrim( rtrim( $output, "\n"), "\t" );
 	}
 
 }
