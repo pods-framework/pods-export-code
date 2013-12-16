@@ -160,9 +160,29 @@ class Pods_Export_Code_Admin {
 	}
 
 	/**
-	 * @return array|null
+	 *
 	 */
-	public function exportable_pods() {
+	private function set_exportable_pods () {
+
+		$this->exportable_pods = array();
+
+		$pods = pods_api()->load_pods( array( 'fields' => false ) );
+		foreach ( $pods as $this_pod ) {
+
+			// We do no support table-based Pods
+			if ( 'table' == $this_pod[ 'storage' ] ) {
+				continue;
+			}
+
+			$this->exportable_pods[ ] = $this_pod;
+		}
+
+	}
+
+	/**
+	 * @return array
+	 */
+	public function exportable_pods () {
 		return $this->exportable_pods;
 	}
 
@@ -182,30 +202,11 @@ class Pods_Export_Code_Admin {
 
 		$export_to_code = new Pods_Export_Code_API();
 		foreach ( $pod_names as $this_pod ) {
-			echo $export_to_code->export_pod( $this_pod );
+			$code_output = $export_to_code->export_pod( $this_pod );
+			echo preg_replace( "/ {2}/", "\t", $code_output );
 		}
 
 		die();
-	}
-
-	/**
-	 *
-	 */
-	private function set_exportable_pods() {
-
-		$this->exportable_pods = array();
-
-		$pods = pods_api()->load_pods( array( 'fields' => false ) );
-		foreach ( $pods as $this_pod ) {
-
-			// We only support meta-based Pods
-			if ( 'table' == $this_pod[ 'storage' ] ) {
-				continue;
-			}
-
-			$this->exportable_pods[] = $this_pod;
-		}
-
 	}
 
 }
