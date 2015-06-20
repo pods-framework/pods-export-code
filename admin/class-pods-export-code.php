@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class Pods_Export_Code_Admin
  */
@@ -19,22 +20,17 @@ class Pods_Export_Code_Admin {
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
-	 * @var array
-	 */
-	protected $exportable_pods = array();
-
-	/**
 	 * Initialize the plugin by loading admin scripts & styles and adding a
 	 * settings page and menu.
 	 *
 	 * @since     1.0.0
 	 */
-	private function __construct () {
+	private function __construct() {
 
 		/*
 		 * Call $plugin_slug from public plugin class.
 		 */
-		$plugin = Pods_Export_Code::get_instance();
+		$plugin            = Pods_Export_Code::get_instance();
 		$this->plugin_slug = $plugin->get_plugin_slug();
 
 		// Load admin style sheet and JavaScript.
@@ -55,7 +51,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    object    A single instance of this class.
 	 */
-	public static function get_instance () {
+	public static function get_instance() {
 
 		// If the single instance hasn't been set, set it now.
 		if ( null == self::$instance ) {
@@ -72,9 +68,9 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
-	public function enqueue_admin_styles () {
+	public function enqueue_admin_styles() {
 
-		if ( !isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
@@ -92,15 +88,22 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
-	public function enqueue_admin_scripts () {
+	public function enqueue_admin_scripts() {
 
-		if ( !isset( $this->plugin_screen_hook_suffix ) ) {
+		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
 
 		$screen = get_current_screen();
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
+			$export_pods      = new Pods_Export_Pods();
+			$export_templates = new Pods_Export_Post_Object( '_pods_template' );
+			$export_pages     = new Pods_Export_Post_Object( '_pods_page' );
+
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', __FILE__ ), array( 'jquery' ), Pods_Export_Code::VERSION );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pods', $export_pods->get_items() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_templates', $export_templates->get_items() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pages', $export_pages->get_items() );
 		}
 
 	}
@@ -112,7 +115,7 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @return array
 	 */
-	public function add_plugin_admin_menu ( $admin_menus ) {
+	public function add_plugin_admin_menu( $admin_menus ) {
 
 		// Fresh array to insert our new menu item
 		$new_menus = array();
@@ -147,74 +150,30 @@ class Pods_Export_Code_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function display_plugin_admin_page () {
+	public function display_plugin_admin_page() {
 
-		$this->set_exportable_pods();
-		if ( count( $this->exportable_pods() ) > 0 ) {
-			include_once( 'views/admin.php' );
-		}
-		else {
-			include_once( 'views/admin-no-pods.php' );
-		}
-
-	}
-
-	/**
-	 *
-	 */
-	private function set_exportable_pods () {
-
-		$this->exportable_pods = array();
-
-		$pods = pods_api()->load_pods( array( 'fields' => false ) );
-		foreach ( $pods as $this_pod ) {
-
-			// We do no support table-based Pods
-			if ( 'table' == $this_pod[ 'storage' ] ) {
-				continue;
-			}
-
-			$this->exportable_pods[ ] = $this_pod;
-		}
-
-	}
-
-	/**
-	 * @return array
-	 */
-	public function exportable_pods () {
-		return $this->exportable_pods;
+		include_once( 'views/admin.php' );
 	}
 
 	/**
 	 * AJAX handler
 	 */
-	public function pods_export_code () {
+	public function pods_export_code() {
 
-		if ( !isset( $_POST[ 'pod_names' ] ) ) {
+		if ( isset( $_POST[ 'pods-export-pods' ] ) ) {
+			$export_object = new Pods_Export_Pods();
+			$export_object->export( $_POST[ 'pods-export-pods' ] );
+			die();
+		} elseif ( isset( $_POST[ 'pods-export-templates' ] ) ) {
+			$export_object = new Pods_Export_Post_Object( '_pods_template' );
+			$export_object->export( $_POST[ 'pods-export-templates' ], 'pods-export-templates' );
+			die();
+		} elseif ( isset( $_POST[ 'pods-export-pages' ] ) ) {
+			$export_object = new Pods_Export_Post_Object( '_pods_page' );
+			$export_object->export( $_POST[ 'pods-export-pages' ], 'pods-export-pages' );
 			die();
 		}
-		$pod_names = $_POST[ 'pod_names' ];
 
-		if ( !is_array( $pod_names ) ) {
-			die();
-		}
-
-		$export_to_code = new Pods_Export_Code_API();
-
-		// Output function
-		$function = 'register_my_pods_config_' . rand( 11, rand( 1212, 452452 ) * 651 );
-
-		echo "function {$function}() {\n\n";
-
-		foreach ( $pod_names as $this_pod ) {
-			echo $export_to_code->export_pod( $this_pod );
-		}
-
-		echo "}\n";
-		echo "add_action( 'init', '{$function}' );";
-
-		die();
 	}
 
 }
