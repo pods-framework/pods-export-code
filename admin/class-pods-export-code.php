@@ -172,6 +172,9 @@ class Pods_Export_Code_Admin {
 			$export_object = new Pods_Export_Post_Object( '_pods_page' );
 			echo $export_object->export( $_POST[ 'pods-export-pages' ], 'pods-export-pages' );
 			die();
+		// No items or an unknown POST key
+		} else {
+			die();
 		}
 
 	}
