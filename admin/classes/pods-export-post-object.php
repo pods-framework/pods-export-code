@@ -38,7 +38,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 				/** @var WP_Post $this_post */
 				foreach ( $query->posts as $this_post ) {
-					$this->items[ ] = $this_post->post_name;
+					$this->items[] = $this_post->post_name;
 				}
 			}
 		}
@@ -56,6 +56,23 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 			return '';
 		}
 
+		/** @global $wp_filesystem WP_Filesystem_Base */
+		global $wp_filesystem;
+
+		WP_Filesystem();
+
+		if ( ! $wp_filesystem ) {
+			return ''; // Todo: do we want to provide any feedback?
+		}
+
+		$template_export_dir = $wp_filesystem->wp_content_dir() . $output_directory;
+
+		if ( ! $wp_filesystem->is_dir( $template_export_dir ) ) {
+			if ( ! $wp_filesystem->mkdir( $template_export_dir, FS_CHMOD_DIR ) ) {
+				return ''; // Todo: do we want to provide any feedback?
+			}
+		}
+
 		foreach ( $items as $this_item ) {
 
 			// Lookup this template in the posts table
@@ -68,23 +85,6 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 			// Found it?
 			if ( is_a( $post, 'WP_Post' ) ) {
-
-				/** @global $wp_filesystem WP_Filesystem_Base */
-				global $wp_filesystem;
-
-				WP_Filesystem();
-
-				if ( ! $wp_filesystem ) {
-					return ''; // Todo: do we want to provide any feedback?
-				}
-
-				$template_export_dir = $wp_filesystem->wp_content_dir() . $output_directory;
-
-				if ( ! $wp_filesystem->is_dir( $template_export_dir ) ) {
-					if ( ! $wp_filesystem->mkdir( $template_export_dir, FS_CHMOD_DIR ) ) {
-						return ''; // Todo: do we want to provide any feedback?
-					}
-				}
 
 				// Todo: do something besides blindly ignore errors from put_contents?
 				$filename = trailingslashit( $template_export_dir ) . $this_item . '.php';
