@@ -30,24 +30,38 @@ jQuery( function ( $ ) {
 			form_class    : 'pods-submittable'
 		}, options );
 
-		// 'this' context will be a jQuery object to which we were applied
-		return this.each( function () {
-
-			var $form = $( '<form>', {
+		var components = {
+			$form      : $( '<form>', {
 				action : '',
 				method : 'post',
 				'class': options.form_class
-			} );
-
-			var $toggle_all = $( '<a>', {
+			} ),
+			$toggle_all: $( '<a>', {
 				href   : '#',
 				'class': 'toggle-all button', // Todo
 				click  : toggle_all_click,
 				text   : 'Toggle all on / off'
-			} );
+			} ),
+			$item_list : $( '<ul>' ),
+			$submit    : $( '<a>', {
+				'class': 'button button-primary pods-export-submit', // Todo
+				id     : options.id_prefix + '-submit',
+				href   : '#',
+				click  : submit_click,
+				text   : 'Export'
+			} ),
+			$output    : $( '<div>', { 'class': 'output-wrapper' } )
+				.append( $( '<div>', { text: 'Output:' } ) )
+				.append( $( '<textarea>', {
+					id: options.id_prefix + '-result-output'
+				} )
+			)
+		};
+
+		// 'this' context will be a jQuery object to which we were applied
+		return this.each( function () {
 
 			// Build the checkbox list
-			var $item_list = $( '<ul>' );
 			var $new_item;
 			var list_class;
 
@@ -59,38 +73,32 @@ jQuery( function ( $ ) {
 
 				$new_item.append( $( '<input>', {
 					name   : this,
+					id     : options.id_prefix + this,
 					type   : 'checkbox',
 					checked: true
 				} ) );
 
 				$new_item.append( $( '<label>', {
-					'for': this,
+					'for': options.id_prefix + this,
 					text : this
 				} ) );
 
-				$item_list.append( $new_item );
+				components.$item_list.append( $new_item );
 			} );
 
-			var $submit = $( '<a>', {
-				'class': 'button button-primary pods-export-submit', // Todo
-				id     : options.id_prefix + '-submit',
-				href   : '#',
-				click  : submit_click,
-				text   : 'Export'
-			} );
-
-			$form.append( $toggle_all );
-			$form.append( $item_list );
-			$form.append( $( '<div>', { css: { clear: 'both' } } ) );
-			$form.append( $submit );
-			$form.appendTo( this );
+			components.$form.append( components.$toggle_all );
+			components.$form.append( components.$item_list );
+			components.$form.append( $( '<div>', { css: { clear: 'both' } } ) );
+			components.$form.append( components.$submit );
+			components.$form.append( components.$output );
+			components.$form.appendTo( this );
 		} );
 
 		/**
 		 * @param e
 		 */
 		function submit_click( e ) {
-			var $checkboxes = $( this ).siblings( 'ul' ).find( ':checkbox' );
+			var $checkboxes = components.$item_list.find( ':checkbox' );
 
 			e.preventDefault(); // Don't follow the href for the button link
 
@@ -106,8 +114,7 @@ jQuery( function ( $ ) {
 
 			/*global ajaxurl */
 			$.post( ajaxurl, data, function ( response ) {
-				//$output.html( response );
-				console.log( response );
+				components.$output.find( 'textarea' ).val( response );
 			} );
 		}
 
@@ -115,7 +122,7 @@ jQuery( function ( $ ) {
 		 * @param e
 		 */
 		function toggle_all_click( e ) {
-			var $checkboxes = $( this ).siblings( 'ul' ).find( ':checkbox' );
+			var $checkboxes = components.$item_list.find( ':checkbox' );
 
 			e.preventDefault();  // Don't follow the href for the button link
 
