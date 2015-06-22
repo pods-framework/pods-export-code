@@ -30,6 +30,8 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 			$args  = array(
 				'post_type' => $this->post_type,
+				'orderby'   => 'name',
+				'order'     => 'ASC',
 				'nopaging'  => true
 			);
 			$query = new WP_Query( $args );

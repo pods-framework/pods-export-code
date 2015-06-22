@@ -38,6 +38,8 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 
 				$this->items[] = $this_pod[ 'name' ];
 			}
+
+			sort( $this->items, SORT_STRING );
 		}
 
 		return $this->items;
