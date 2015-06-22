@@ -54,8 +54,9 @@ jQuery( function ( $ ) {
 				.append( $( '<div>', { text: 'Output:' } ) )
 				.append( $( '<textarea>', {
 					id: options.id_prefix + '-result-output'
+
 				} )
-			)
+			).hide()
 		};
 
 		// 'this' context will be a jQuery object to which we were applied
@@ -115,6 +116,7 @@ jQuery( function ( $ ) {
 			/*global ajaxurl */
 			$.post( ajaxurl, data, function ( response ) {
 				components.$output.find( 'textarea' ).val( response );
+				components.$output.show();
 			} );
 		}
 
