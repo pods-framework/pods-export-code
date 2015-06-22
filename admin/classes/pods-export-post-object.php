@@ -86,9 +86,18 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 			// Found it?
 			if ( is_a( $post, 'WP_Post' ) ) {
 
+				/**
+				 * Filter the post content before writing out to the file
+				 *
+				 * @since 0.9.1
+				 *
+				 * @param string $value
+				 */
+				$content = apply_filters( "pods_export_code_post_content{$this->post_type}", $post->post_content );
+
 				// Todo: do something besides blindly ignore errors from put_contents?
 				$filename = trailingslashit( $template_export_dir ) . $this_item . '.php';
-				$wp_filesystem->put_contents( $filename, $post->post_content, FS_CHMOD_FILE );
+				$wp_filesystem->put_contents( $filename, $content, FS_CHMOD_FILE );
 			}
 		}
 
