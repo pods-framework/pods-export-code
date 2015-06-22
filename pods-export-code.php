@@ -51,7 +51,7 @@ add_action( 'plugins_loaded', array( 'Pods_Export_Code', 'get_instance' ) );
 
 if ( is_admin() ) {
 	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-code-object.php';
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-post-type.php';
+	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-post-object.php';
 	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-pods.php';
 	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-code-api.php';
 	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/class-pods-export-code.php';
