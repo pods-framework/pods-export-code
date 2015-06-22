@@ -6,7 +6,7 @@
 abstract class Pods_Export_Code_Object {
 
 	/** @var array|null */
-	var $items = null;
+	protected $items = null;
 
 	/**
 	 * @return array Array of names of all the exportable objects of this type
