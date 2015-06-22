@@ -68,7 +68,7 @@ jQuery( function ( $ ) {
 			// 'this' context will be an exportable item's name
 			$.each( items, function () {
 
-				list_class = ( 'pods-zebra-even' == list_class ) ? 'pods-zebra-odd' : 'pods-zebra-even';
+				list_class = ( 'pods-zebra-odd' == list_class ) ? 'pods-zebra-even' : 'pods-zebra-odd';
 				$new_item = $( '<li>', { 'class': list_class } );
 
 				$new_item.append( $( '<input>', {
