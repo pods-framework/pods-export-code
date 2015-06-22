@@ -89,7 +89,6 @@ jQuery( function ( $ ) {
 
 			components.$form.append( components.$toggle_all );
 			components.$form.append( components.$item_list );
-			components.$form.append( $( '<div>', { css: { clear: 'both' } } ) );
 			components.$form.append( components.$submit );
 			components.$form.append( components.$output );
 			components.$form.appendTo( this );
