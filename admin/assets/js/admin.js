@@ -24,10 +24,12 @@ jQuery( function ( $ ) {
 
 		// Merge specified options with defaults
 		options = $.extend( {
-			id_prefix     : this.attr( 'id' ),
-			ajax_action   : 'pods_export_code',
-			ajax_item_type: this.data( 'item-type' ),
-			form_class    : 'pods-submittable'
+			ajax      : {
+				action   : 'pods_export_code',
+				item_type: this.data( 'item-type' )
+			},
+			id_prefix : this.attr( 'id' ),
+			form_class: 'pods-submittable'
 		}, options );
 
 		var $form = $( '<form>', {
@@ -115,8 +117,8 @@ jQuery( function ( $ ) {
 			} );
 
 			// AJAX call
-			var data = { action: options.ajax_action };
-			data[ options.ajax_item_type ] = checked_items; // e.g. pods-export-templates: array of template names
+			var data = { action: options.ajax.action };
+			data[ options.ajax.item_type ] = checked_items; // e.g. pods-export-templates: array of template names
 
 			/*global ajaxurl */
 			$.post( ajaxurl, data, function ( response ) {
