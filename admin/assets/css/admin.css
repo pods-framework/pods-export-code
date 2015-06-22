@@ -1,3 +1,14 @@
+.export-to-code-section {
+	background-color: #e8e8e8;
+	padding: 1em;
+	border: 1px solid #aaa;
+}
+
+.export-to-code-section ul {
+	overflow: auto;
+	margin: 2em 0;
+}
+
 li.pods-zebra-even {
 	display: block;
 	width: 50%;
@@ -12,29 +23,14 @@ li.pods-zebra-odd {
 	clear: both;
 }
 
-
-.stuffbox.pods-export-code {
-	width: 782px;
-	margin: 15px 15px 0 0;
+.button-primary {
+	padding: 0 2em;
 }
 
-.stuffbox.pods-export-code h3 {
-	font-size: 15px;
-	font-weight: normal;
-	line-height: 1;
-	padding: 7px 10px;
-	font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
+.output-wrapper {
+	margin: 1em 0 0 0;
 }
-
-.stuffbox.pods-export-code .submit {
-	clear: both;
-}
-
-.pods-export-code div.pods-manage-field .pods-field-option-group {
-	padding-top: 0;
-}
-
-#feedback {
+.output-wrapper textarea {
 	width: 100%;
-	height: 400px;
+	height: 30em;
 }
