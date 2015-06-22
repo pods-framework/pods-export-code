@@ -36,7 +36,7 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 	public function export( $items, $output_directory = null ) {
 
 		if ( ! is_array( $items ) ) {
-			return;
+			return '';
 		}
 
 		$export_to_code = new Pods_Export_Code_API();
@@ -44,14 +44,17 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 		// Output function
 		$function = 'register_my_pods_config_' . rand( 11, rand( 1212, 452452 ) * 651 );
 
-		echo "function {$function}() {\n\n";
+		$result = "function {$function}() {\n\n";
 
 		foreach ( $items as $this_item ) {
-			echo $export_to_code->export_pod( $this_item );
+			$result .= $export_to_code->export_pod( $this_item );
 		}
 
-		echo "}\n";
-		echo "add_action( 'init', '{$function}' );";
+		$result .= "}\n";
+		$result .= "add_action( 'init', '{$function}' );";
+
+		return $result;
 
 	}
+
 }

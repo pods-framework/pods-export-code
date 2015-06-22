@@ -162,15 +162,15 @@ class Pods_Export_Code_Admin {
 
 		if ( isset( $_POST[ 'pods-export-pods' ] ) ) {
 			$export_object = new Pods_Export_Pods();
-			$export_object->export( $_POST[ 'pods-export-pods' ] );
+			echo $export_object->export( $_POST[ 'pods-export-pods' ] );
 			die();
 		} elseif ( isset( $_POST[ 'pods-export-templates' ] ) ) {
 			$export_object = new Pods_Export_Post_Object( '_pods_template' );
-			$export_object->export( $_POST[ 'pods-export-templates' ], 'pods-export-templates' );
+			echo $export_object->export( $_POST[ 'pods-export-templates' ], 'pods-export-templates' );
 			die();
 		} elseif ( isset( $_POST[ 'pods-export-pages' ] ) ) {
 			$export_object = new Pods_Export_Post_Object( '_pods_page' );
-			$export_object->export( $_POST[ 'pods-export-pages' ], 'pods-export-pages' );
+			echo $export_object->export( $_POST[ 'pods-export-pages' ], 'pods-export-pages' );
 			die();
 		}
 

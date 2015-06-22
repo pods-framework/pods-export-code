@@ -53,7 +53,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	public function export( $items, $output_directory = null ) {
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
-			return;
+			return '';
 		}
 
 		foreach ( $items as $this_item ) {
@@ -75,14 +75,14 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 				WP_Filesystem();
 
 				if ( ! $wp_filesystem ) {
-					return;
+					return ''; // Todo: do we want to provide any feedback?
 				}
 
 				$template_export_dir = $wp_filesystem->wp_content_dir() . $output_directory;
 
 				if ( ! $wp_filesystem->is_dir( $template_export_dir ) ) {
 					if ( ! $wp_filesystem->mkdir( $template_export_dir, FS_CHMOD_DIR ) ) {
-						return;
+						return ''; // Todo: do we want to provide any feedback?
 					}
 				}
 
@@ -91,6 +91,8 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 				$wp_filesystem->put_contents( $filename, $post->post_content, FS_CHMOD_FILE );
 			}
 		}
+
+		return ''; // Todo: do we want to provide any feedback?
 
 	}
 
