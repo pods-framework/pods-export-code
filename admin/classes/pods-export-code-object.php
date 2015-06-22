@@ -11,7 +11,7 @@ abstract class Pods_Export_Code_Object {
 	/**
 	 * @return array Array of names of all the exportable objects of this type
 	 */
-	abstract public function get_items();
+	abstract public function get_item_names();
 
 	/**
 	 * This function is called via ajax and any output will be part of the result

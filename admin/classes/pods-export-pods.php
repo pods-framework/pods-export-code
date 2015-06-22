@@ -8,7 +8,7 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_items() {
+	public function get_item_names() {
 
 		if ( is_null( $this->items ) ) {
 

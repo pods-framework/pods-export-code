@@ -101,9 +101,9 @@ class Pods_Export_Code_Admin {
 			$export_pages     = new Pods_Export_Post_Object( '_pods_page' );
 
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', __FILE__ ), array( 'jquery' ), Pods_Export_Code::VERSION );
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pods', $export_pods->get_items() );
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_templates', $export_templates->get_items() );
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pages', $export_pages->get_items() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pods', $export_pods->get_item_names() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_templates', $export_templates->get_item_names() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pages', $export_pages->get_item_names() );
 		}
 
 	}

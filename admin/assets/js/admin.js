@@ -108,7 +108,7 @@ jQuery( function ( $ ) {
 
 			e.preventDefault(); // Don't follow the href for the button link
 
-			// Get an array of selected Pod names
+			// Build an array of selected item names
 			var checked_items = [];
 			$checkboxes.filter( ':checked' ).each( function () {
 				checked_items.push( $( this ).attr( 'name' ) );
