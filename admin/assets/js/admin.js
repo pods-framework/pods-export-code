@@ -30,12 +30,13 @@ jQuery( function ( $ ) {
 			form_class    : 'pods-submittable'
 		}, options );
 
+		var $form = $( '<form>', {
+			action : '',
+			method : 'post',
+			'class': options.form_class
+		} );
+
 		var components = {
-			$form      : $( '<form>', {
-				action : '',
-				method : 'post',
-				'class': options.form_class
-			} ),
 			$toggle_all: $( '<a>', {
 				href   : '#',
 				'class': 'toggle-all button', // Todo
@@ -87,11 +88,16 @@ jQuery( function ( $ ) {
 				components.$item_list.append( $new_item );
 			} );
 
-			components.$form.append( components.$toggle_all );
-			components.$form.append( components.$item_list );
-			components.$form.append( components.$submit );
-			components.$form.append( components.$output );
-			components.$form.appendTo( this );
+			// Add all the components to the form
+			for ( var component in components ) {
+				if ( components.hasOwnProperty( component ) ) {
+					$form.append( components[ component ] );
+				}
+			}
+
+			// Add the form to the targeted container
+			$form.appendTo( this );
+
 		} );
 
 		/**
