@@ -3,7 +3,7 @@
  * Plugin Name:       Pods Export to Code
  * Plugin URI:        http://pods.io/
  * Description:       Pods Export to Code
- * Version:           0.9
+ * Version:           0.9.1
  * Author:            Pods Framework Team
  * Author URI:        http://pods.io/about/
  *
