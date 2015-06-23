@@ -98,7 +98,7 @@ class Pods_Export_Code_Admin {
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
 			$export_pods      = new Pods_Export_Pods();
 			$export_templates = new Pods_Export_Post_Object( '_pods_template' );
-			$export_pages     = new Pods_Export_Post_Object( '_pods_page' );
+			$export_pages     = new Pods_Export_Pages();
 
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', __FILE__ ), array( 'jquery' ), Pods_Export_Code::VERSION );
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pods', $export_pods->get_item_names() );
@@ -169,7 +169,7 @@ class Pods_Export_Code_Admin {
 			echo $export_object->export( $_POST[ 'pods-export-templates' ], 'pods-export-templates' );
 			die();
 		} elseif ( isset( $_POST[ 'pods-export-pages' ] ) ) {
-			$export_object = new Pods_Export_Post_Object( '_pods_page' );
+			$export_object = new Pods_Export_Pages();
 			echo $export_object->export( $_POST[ 'pods-export-pages' ], 'pods-export-pages' );
 			die();
 		// No items or an unknown POST key

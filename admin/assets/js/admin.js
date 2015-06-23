@@ -28,7 +28,7 @@ jQuery( function ( $ ) {
 				action   : 'pods_export_code',
 				item_type: this.data( 'item-type' )
 			},
-			id_prefix : this.attr( 'id' ),
+			id_prefix : this.attr( 'id' ) + '-',
 			form_class: 'pods-submittable'
 		}, options );
 
@@ -48,7 +48,7 @@ jQuery( function ( $ ) {
 			$item_list : $( '<ul>' ),
 			$submit    : $( '<a>', {
 				'class': 'button button-primary pods-export-submit', // Todo
-				id     : options.id_prefix + '-submit',
+				id     : options.id_prefix + 'submit',
 				href   : '#',
 				click  : submit_click,
 				text   : 'Export'
@@ -56,39 +56,39 @@ jQuery( function ( $ ) {
 			$output    : $( '<div>', { 'class': 'output-wrapper' } )
 				.append( $( '<div>', { text: 'Output:' } ) )
 				.append( $( '<textarea>', {
-					id: options.id_prefix + '-result-output'
+					id: options.id_prefix + 'result-output'
 
 				} )
 			).hide()
 		};
 
-		// 'this' context will be a jQuery object to which we were applied
 		return this.each( function () {
 
 			// Build the checkbox list
 			var $new_item;
 			var list_class;
 
-			// 'this' context will be an exportable item's name
-			$.each( items, function () {
+			// Items are in { name: label } format
+			for ( var item in items ) {
+				if ( items.hasOwnProperty( item ) ) {
+					list_class = ( 'pods-zebra-odd' == list_class ) ? 'pods-zebra-even' : 'pods-zebra-odd';
+					$new_item = $( '<li>', { 'class': list_class } );
 
-				list_class = ( 'pods-zebra-odd' == list_class ) ? 'pods-zebra-even' : 'pods-zebra-odd';
-				$new_item = $( '<li>', { 'class': list_class } );
+					$new_item.append( $( '<input>', {
+						name   : item,
+						id     : options.id_prefix + item,
+						type   : 'checkbox',
+						checked: true
+					} ) );
 
-				$new_item.append( $( '<input>', {
-					name   : this,
-					id     : options.id_prefix + this,
-					type   : 'checkbox',
-					checked: true
-				} ) );
+					$new_item.append( $( '<label>', {
+						'for': options.id_prefix + item,
+						text : items[ item ] // Get the label
+					} ) );
 
-				$new_item.append( $( '<label>', {
-					'for': options.id_prefix + this,
-					text : this
-				} ) );
-
-				components.$item_list.append( $new_item );
-			} );
+					components.$item_list.append( $new_item );
+				}
+			}
 
 			// Add all the components to the form
 			for ( var component in components ) {

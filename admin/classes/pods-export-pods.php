@@ -36,10 +36,10 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 					continue;
 				}
 
-				$this->items[] = $this_pod[ 'name' ];
+				$this->items[ $this_pod[ 'name' ] ] = $this_pod[ 'label' ];
 			}
 
-			sort( $this->items, SORT_STRING );
+			asort( $this->items, SORT_STRING );
 		}
 
 		return $this->items;
@@ -49,7 +49,7 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 	/**
 	 * @inheritdoc
 	 */
-	public function export( $items, $output_directory = null ) {
+	public function export( $items, $export_directory = null ) {
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return '';

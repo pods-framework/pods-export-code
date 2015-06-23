@@ -40,7 +40,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 				/** @var WP_Post $this_post */
 				foreach ( $query->posts as $this_post ) {
-					$this->items[] = $this_post->post_name;
+					$this->items[ $this_post->post_name ] = $this_post->post_title;
 				}
 			}
 		}
@@ -52,25 +52,24 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	/**
 	 * @inheritdoc
 	 */
-	public function export( $items, $output_directory = null ) {
+	public function export( $items, $export_directory = null ) {
+
+		/** @global $wp_filesystem WP_Filesystem_Base */
+		global $wp_filesystem;
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return '';
 		}
 
-		/** @global $wp_filesystem WP_Filesystem_Base */
-		global $wp_filesystem;
-
 		WP_Filesystem();
-
 		if ( ! $wp_filesystem ) {
 			return ''; // Todo: do we want to provide any feedback?
 		}
 
-		$template_export_dir = $wp_filesystem->wp_content_dir() . $output_directory;
+		$export_root = $wp_filesystem->wp_content_dir() . $export_directory;
 
-		if ( ! $wp_filesystem->is_dir( $template_export_dir ) ) {
-			if ( ! $wp_filesystem->mkdir( $template_export_dir, FS_CHMOD_DIR ) ) {
+		if ( ! $wp_filesystem->is_dir( $export_root ) ) {
+			if ( ! $wp_filesystem->mkdir( $export_root, FS_CHMOD_DIR ) ) {
 				return ''; // Todo: do we want to provide any feedback?
 			}
 		}
@@ -87,7 +86,6 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 			// Found it?
 			if ( is_a( $post, 'WP_Post' ) ) {
-
 				/**
 				 * Filter the post content before writing out to the file
 				 *
@@ -97,13 +95,28 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 				 */
 				$content = apply_filters( "pods_export_code_post_content{$this->post_type}", $post->post_content );
 
-				// Todo: do something besides blindly ignore errors from put_contents?
-				$filename = trailingslashit( $template_export_dir ) . $this_item . '.php';
-				$wp_filesystem->put_contents( $filename, $content, FS_CHMOD_FILE );
+				$this->export_to_file( $export_root, $content, $post );
 			}
 		}
 
 		return ''; // Todo: do we want to provide any feedback?
+
+	}
+
+	/**
+	 * @param string  $export_root
+	 * @param string  $content
+	 * @param WP_Post $post
+	 *
+	 */
+	protected function export_to_file( $export_root, $content, $post ) {
+
+		/** @global $wp_filesystem WP_Filesystem_Base */
+		global $wp_filesystem;
+
+		// Todo: do something besides blindly ignore errors from put_contents?
+		$filename = trailingslashit( $export_root ) . $post->post_name . '.php';
+		$wp_filesystem->put_contents( $filename, $content, FS_CHMOD_FILE );
 
 	}
 
