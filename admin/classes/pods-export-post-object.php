@@ -104,8 +104,8 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	}
 
 	/**
-	 * @param string  $export_root
-	 * @param string  $content
+	 * @param string  $export_root Full server path to the root export directory
+	 * @param string  $content     The content to be saved (already filtered)
 	 * @param WP_Post $post
 	 *
 	 */
