@@ -40,6 +40,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 		$full_path = $this->export_directory;
 		foreach ( $tree as $this_dir ) {
+			$this_dir = str_replace( '*', self::WILDCARD_REPLACEMENT, $this_dir );
 			$full_path = trailingslashit( $full_path ) . $this_dir;
 
 			if ( ! $wp_filesystem->is_dir( $full_path ) ) {
