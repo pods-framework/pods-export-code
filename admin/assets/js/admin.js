@@ -16,7 +16,7 @@ jQuery( function ( $ ) {
 ( function ( $ ) {
 
 	/**
-	 * @param items Array of exportable object item names
+	 * @param items Array of exportable object item names in { name: label } format
 	 * @param options options to be merged with the defaults
 	 * @returns {*}
 	 */
