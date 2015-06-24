@@ -27,8 +27,10 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		$post_title       = $post->post_title;
 		$tree             = explode( '/', $post_title );
 		$base_filename    = array_pop( $tree );
-		$code_filename    = str_replace( '*', 'w', $base_filename ) . '.php';
-		$precode_filename = str_replace( '*', 'w', $base_filename ) . '-PRECODE.php';
+		$base_filename    = str_replace( '*', 'w', $base_filename ) ;
+		$code_filename    = $base_filename . '.php';
+		$precode_filename = $base_filename . '-PRECODE.php';
+		$object_filename  = $base_filename . '-OBJECT.php';
 
 		$full_path = $export_root;
 		foreach ( $tree as $this_dir ) {
@@ -45,9 +47,6 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		$object = array(
 			'id'            => null,
 			'uri'           => $post->post_title,
-			'code'          => $post->post_content,
-			'phpcode'       => $post->post_content, // phpcode is deprecated
-			'precode'       => get_post_meta( $post->ID, 'precode', true ),
 			'page_template' => get_post_meta( $post->ID, 'page_template', true ),
 			'title'         => get_post_meta( $post->ID, 'page_title', true ),
 			'options'       => array(
@@ -67,6 +66,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		// Todo: do something besides blindly ignore errors from put_contents?
 		$wp_filesystem->put_contents( $full_path . $code_filename, $content, FS_CHMOD_FILE );
 		$wp_filesystem->put_contents( $full_path . $precode_filename, $object[ 'precode' ], FS_CHMOD_FILE );
+		$wp_filesystem->put_contents( $full_path . $object_filename, serialize( $object ), FS_CHMOD_FILE );
 
 	}
 
