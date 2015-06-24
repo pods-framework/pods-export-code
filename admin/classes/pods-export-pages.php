@@ -7,6 +7,12 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 	const POST_TYPE = '_pods_page';
 
+	const WILDCARD_REPLACEMENT = '_w_';
+
+	const PRECODE_FILE_SUFFIX = '-PRECODE';
+
+	const OBJECT_FILE_SUFFIX = '-OBJECT';
+
 	/**
 	 * @param string $export_directory Directory for the exported files. Will be prefixed with the wp-content path.
 	 */
@@ -27,10 +33,10 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		$post_title       = $post->post_title;
 		$tree             = explode( '/', $post_title );
 		$base_filename    = array_pop( $tree );
-		$base_filename    = str_replace( '*', 'w', $base_filename );
+		$base_filename    = str_replace( '*', self::WILDCARD_REPLACEMENT, $base_filename );
 		$code_filename    = $base_filename . '.php';
-		$precode_filename = $base_filename . '-PRECODE.php';
-		$object_filename  = $base_filename . '-OBJECT.php';
+		$precode_filename = $base_filename .  self::PRECODE_FILE_SUFFIX . '.php';
+		$object_filename  = $base_filename . self:: OBJECT_FILE_SUFFIX . '.php';
 
 		$full_path = $this->export_directory;
 		foreach ( $tree as $this_dir ) {
@@ -101,18 +107,18 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 				// Last part of the pods page path, could be a page name or a wildcard
 				$explicit_filename = trailingslashit( $last_dir ) . $this_target . '.php';
-				$wildcard_filename = trailingslashit( $last_dir ) . 'w.php';
+				$wildcard_filename = trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . '.php';
 				$found             = false;
 				if ( $wp_filesystem->is_readable( $explicit_filename ) ) {
 					$found   = true;
-					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . '-OBJECT.php' ) );
+					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . self::OBJECT_FILE_SUFFIX . '.php' ) );
 					$code    = $wp_filesystem->get_contents( $explicit_filename );
-					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . '-PRECODE.php' );
+					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . self:: PRECODE_FILE_SUFFIX . '.php' );
 				} elseif ( $wp_filesystem->is_readable( $wildcard_filename ) ) {
 					$found   = true;
-					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . 'w-OBJECT.php' ) );
+					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . self::OBJECT_FILE_SUFFIX . '.php' ) );
 					$code    = $wp_filesystem->get_contents( $wildcard_filename );
-					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . 'w-PRECODE.php' );
+					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . self::PRECODE_FILE_SUFFIX . '.php' );
 				}
 
 				if ( $found ) {
