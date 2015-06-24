@@ -49,7 +49,7 @@ class Pods_Export_Pods extends Pods_Export_Code_Object {
 	/**
 	 * @inheritdoc
 	 */
-	public function export( $items, $export_directory = null ) {
+	public function export( $items ) {
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			return '';

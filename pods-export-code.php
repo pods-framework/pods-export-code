@@ -43,18 +43,18 @@ require_once PODS_EXPORT_TO_CODE_DIR . 'public/class-pods-export-code.php';
 register_activation_hook( __FILE__, array( 'Pods_Export_Code', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Pods_Export_Code', 'deactivate' ) );
 
-add_action( 'plugins_loaded', array( 'Pods_Export_Code', 'get_instance' ) );
-
 /*----------------------------------------------------------------------------*
  * Dashboard and Administrative Functionality
  *----------------------------------------------------------------------------*/
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-code-object.php';
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-post-object.php';
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-templates.php';
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-pages.php';
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-pods.php';
+require_once PODS_EXPORT_TO_CODE_DIR . 'admin/class-pods-export-code.php';
 
 if ( is_admin() ) {
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-code-object.php';
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-post-object.php';
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-pages.php';
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/classes/pods-export-pods.php';
-	require_once PODS_EXPORT_TO_CODE_DIR . 'admin/class-pods-export-code.php';
-
 	add_action( 'plugins_loaded', array( 'Pods_Export_Code_Admin', 'get_instance' ) );
+} else {
+	add_filter( 'pods_page_exists', array( 'Pods_Export_Pages', 'intercept_pods_page' ), 10, 2 );
 }

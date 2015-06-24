@@ -11,12 +11,23 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	public $post_type;
 
 	/**
-	 * @param string $post_type
+	 * @var string Full directory path for the exported files
 	 */
-	public function __construct( $post_type ) {
+	public $export_directory;
+
+	/**
+	 * @param string $post_type
+	 * @param string $export_directory Directory for the exported files. Will be prefixed with the wp-content path.
+	 */
+	public function __construct( $post_type, $export_directory ) {
+
+		/** @global $wp_filesystem WP_Filesystem_Base */
+		global $wp_filesystem;
+		WP_Filesystem();
 
 		$this->post_type = $post_type;
 
+		$this->export_directory = $wp_filesystem->wp_content_dir() . $export_directory;
 	}
 
 	/**
@@ -52,7 +63,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	/**
 	 * @inheritdoc
 	 */
-	public function export( $items, $export_directory = null ) {
+	public function export( $items ) {
 
 		/** @global $wp_filesystem WP_Filesystem_Base */
 		global $wp_filesystem;
@@ -66,10 +77,8 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 			return ''; // Todo: do we want to provide any feedback?
 		}
 
-		$export_root = $wp_filesystem->wp_content_dir() . $export_directory;
-
-		if ( ! $wp_filesystem->is_dir( $export_root ) ) {
-			if ( ! $wp_filesystem->mkdir( $export_root, FS_CHMOD_DIR ) ) {
+		if ( ! $wp_filesystem->is_dir( $this->export_directory ) ) {
+			if ( ! $wp_filesystem->mkdir( $this->export_directory, FS_CHMOD_DIR ) ) {
 				return ''; // Todo: do we want to provide any feedback?
 			}
 		}
@@ -95,7 +104,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 				 */
 				$content = apply_filters( "pods_export_code_post_content{$this->post_type}", $post->post_content );
 
-				$this->export_to_file( $export_root, $content, $post );
+				$this->export_to_file( $content, $post );
 			}
 		}
 
@@ -104,18 +113,16 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	}
 
 	/**
-	 * @param string  $export_root Full server path to the root export directory
-	 * @param string  $content     The content to be saved (already filtered)
+	 * @param string  $content The content to be saved (already filtered)
 	 * @param WP_Post $post
-	 *
 	 */
-	protected function export_to_file( $export_root, $content, $post ) {
+	protected function export_to_file( $content, $post ) {
 
 		/** @global $wp_filesystem WP_Filesystem_Base */
 		global $wp_filesystem;
 
 		// Todo: do something besides blindly ignore errors from put_contents?
-		$filename = trailingslashit( $export_root ) . $post->post_name . '.php';
+		$filename = trailingslashit( $this->export_directory ) . $post->post_name . '.php';
 		$wp_filesystem->put_contents( $filename, $content, FS_CHMOD_FILE );
 
 	}
