@@ -88,8 +88,9 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 			// Lookup this template in the posts table
 			$args  = array(
-				'post_type' => $this->post_type,
-				'name'      => $this_item
+				'post_type'   => $this->post_type,
+				'post_status' => 'publish',
+				'name'        => $this_item
 			);
 			$query = new WP_Query( $args );
 			$post  = $query->post;

@@ -35,7 +35,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		$base_filename    = array_pop( $tree );
 		$base_filename    = str_replace( '*', self::WILDCARD_REPLACEMENT, $base_filename );
 		$code_filename    = $base_filename . '.php';
-		$precode_filename = $base_filename .  self::PRECODE_FILE_SUFFIX . '.php';
+		$precode_filename = $base_filename . self::PRECODE_FILE_SUFFIX . '.php';
 		$object_filename  = $base_filename . self:: OBJECT_FILE_SUFFIX . '.php';
 
 		$full_path = $this->export_directory;
