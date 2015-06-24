@@ -56,5 +56,7 @@ require_once PODS_EXPORT_TO_CODE_DIR . 'admin/class-pods-export-code.php';
 if ( is_admin() ) {
 	add_action( 'plugins_loaded', array( 'Pods_Export_Code_Admin', 'get_instance' ) );
 } else {
-	add_filter( 'pods_page_exists', array( 'Pods_Export_Pages', 'intercept_pods_page' ), 10, 2 );
+	// Todo: This is for testing only
+	$pods_export_pages = new Pods_Export_Pages();
+	add_filter( 'pods_page_exists', array( $pods_export_pages, 'intercept_pods_page' ), 10, 2 );
 }

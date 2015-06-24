@@ -22,6 +22,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	public function __construct( $post_type, $export_directory ) {
 
 		/** @global $wp_filesystem WP_Filesystem_Base */
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		global $wp_filesystem;
 		WP_Filesystem();
 

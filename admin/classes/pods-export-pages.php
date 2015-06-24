@@ -77,12 +77,14 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 	}
 
 	/**
+	 * Hook the 'pods_page_exists' filter and point it here
+	 *
 	 * @param $object
 	 * @param $uri
 	 *
 	 * @return mixed
 	 */
-	public static function intercept_pods_page( $object, $uri ) {
+	public function intercept_pods_page( $object, $uri ) {
 
 		/** @global $wp_filesystem WP_Filesystem_Base */
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
@@ -92,7 +94,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		$tree = explode( '/', $uri );
 		//$last_segment = array_pop( $tree );
 
-		$current_dir = $wp_filesystem->wp_content_dir() . 'pods-export-pages';
+		$current_dir = $this->export_directory;
 		foreach ( $tree as $this_target ) {
 
 			$last_dir    = $current_dir;
