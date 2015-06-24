@@ -62,6 +62,7 @@ jQuery( function ( $ ) {
 			).hide()
 		};
 
+		// 'this' context will be a jQuery object to which we were applied
 		return this.each( function () {
 
 			// Build the checkbox list
