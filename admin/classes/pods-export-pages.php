@@ -40,7 +40,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 		$full_path = $this->export_directory;
 		foreach ( $tree as $this_dir ) {
-			$this_dir = str_replace( '*', self::WILDCARD_REPLACEMENT, $this_dir );
+			$this_dir  = str_replace( '*', self::WILDCARD_REPLACEMENT, $this_dir );
 			$full_path = trailingslashit( $full_path ) . $this_dir;
 
 			if ( ! $wp_filesystem->is_dir( $full_path ) ) {
@@ -92,48 +92,79 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		global $wp_filesystem;
 		WP_Filesystem();
 
-		$tree = explode( '/', $uri );
-		//$last_segment = array_pop( $tree );
+		$code_file = $this->find_pods_page( $this->export_directory, $uri );
+		if ( is_null( $code_file ) ) {
+			return $object;
+		}
+		$code_file    = trailingslashit( $this->export_directory ) . $code_file;
+		$base_name    = preg_replace( '/\.php$/', '', $code_file );
+		$precode_file = $base_name . self::PRECODE_FILE_SUFFIX . '.php';
+		$object_file  = $base_name . self::OBJECT_FILE_SUFFIX . '.php';
 
-		$current_dir = $this->export_directory;
-		foreach ( $tree as $this_target ) {
+		$object  = unserialize( $wp_filesystem->get_contents( $object_file ) );
+		$code    = $wp_filesystem->get_contents( $code_file );
+		$precode = $wp_filesystem->get_contents( $precode_file );
 
-			$last_dir    = $current_dir;
-			$current_dir = trailingslashit( $current_dir ) . $this_target;
-			if ( ! $wp_filesystem->is_dir( $current_dir ) ) {
+		$object[ 'code' ]    = $code;
+		$object[ 'phpcode' ] = $code; // phpcode is deprecated
+		$object[ 'precode' ] = $precode;
 
-				// Not a directory and not the last part of the path, then it's no match
-				$last_index = count( $tree ) - 1;
-				if ( ! $tree[ $last_index ] == $this_target ) {
-					return $object;
+		return $object;
+	}
+
+	/**
+	 * @param string $starting_dir
+	 * @param string $uri
+	 *
+	 * @return string|null Matching subdirectory name or NULL
+	 */
+	protected function find_pods_page( $starting_dir, $uri ) {
+
+		$uri_segments = explode( '/', $uri );
+		$target       = array_shift( $uri_segments );
+
+		// The final segment will be a physical file
+		if ( 0 == count( $uri_segments ) ) {
+			$target .= '.php';
+
+			$files = scandir( $starting_dir );
+			foreach ( $files as $this_file ) {
+				if ( is_dir( $this_file ) ) {
+					continue;
 				}
 
-				// Last part of the pods page path, could be a page name or a wildcard
-				$explicit_filename = trailingslashit( $last_dir ) . $this_target . '.php';
-				$wildcard_filename = trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . '.php';
-				$found             = false;
-				if ( $wp_filesystem->is_readable( $explicit_filename ) ) {
-					$found   = true;
-					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . self::OBJECT_FILE_SUFFIX . '.php' ) );
-					$code    = $wp_filesystem->get_contents( $explicit_filename );
-					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . $this_target . self:: PRECODE_FILE_SUFFIX . '.php' );
-				} elseif ( $wp_filesystem->is_readable( $wildcard_filename ) ) {
-					$found   = true;
-					$object  = unserialize( $wp_filesystem->get_contents( trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . self::OBJECT_FILE_SUFFIX . '.php' ) );
-					$code    = $wp_filesystem->get_contents( $wildcard_filename );
-					$precode = $wp_filesystem->get_contents( trailingslashit( $last_dir ) . self::WILDCARD_REPLACEMENT . self::PRECODE_FILE_SUFFIX . '.php' );
-				}
-
-				if ( $found ) {
-					$object[ 'code' ]    = $code;
-					$object[ 'phpcode' ] = $code; // phpcode is deprecated
-					$object[ 'precode' ] = $precode;
+				$this_file_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $this_file ); // Convert wildcards to PCRE
+				if ( preg_match( '/^' . $this_file_pcre . '$/', $target ) ) {
+					return $this_file;
 				}
 			}
 
+			return null;
+
+			// This isn't the last segment so it has to match a directory
+		} else {
+
+			$dir_list = glob( trailingslashit( $starting_dir ) . '*', GLOB_ONLYDIR ); // Full path of all subdirectories
+			if ( ! is_array( $dir_list ) || 0 >= count( $dir_list ) ) {
+				return null;
+			}
+
+			$dir_list      = array_map( 'basename', $dir_list ); // Just the subdirectory names
+			$dir_list_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $dir_list ); // Convert wildcards to PCRE
+			foreach ( $dir_list_pcre as $key => $subdirectory ) {
+
+				if ( preg_match( '/^' . $subdirectory . '$/', $target ) ) {
+					$check_dir = trailingslashit( $starting_dir ) . $dir_list[ $key ];
+					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
+					if ( ! is_null( $path ) ) {
+						return trailingslashit( $dir_list[ $key ] ) . $path;
+					}
+				}
+			}
+
+			return null;
 		}
 
-		return $object;
 	}
 
 }
