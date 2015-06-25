@@ -59,4 +59,7 @@ if ( is_admin() ) {
 	// Todo: This is for testing only
 	$pods_export_pages = new Pods_Export_Pages();
 	add_filter( 'pods_page_exists', array( $pods_export_pages, 'intercept_pods_page' ), 10, 2 );
+
+	$pods_export_templates = new Pods_Export_Templates();
+	add_filter( 'pods_templates_pre_template', array( $pods_export_templates, 'intercept_pods_template' ), 10, 3 );
 }

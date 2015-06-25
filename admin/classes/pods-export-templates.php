@@ -16,4 +16,28 @@ class Pods_Export_Templates extends Pods_Export_Post_Object {
 
 	}
 
+	/**
+	 * @param string $code
+	 * @param array  $template
+	 * @param Pods   $obj
+	 *
+	 * @return string
+	 */
+	public function intercept_pods_template( $code, $template, $obj ) {
+
+		/** @global $wp_filesystem WP_Filesystem_Base */
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		global $wp_filesystem;
+		WP_Filesystem();
+
+		$target_file = trailingslashit( $this->export_directory ) . $template[ 'slug' ] . '.php';
+
+		if ( file_exists( $target_file) ) {
+			$code = $wp_filesystem->get_contents( $target_file);
+		}
+
+		return $code;
+
+	}
+
 }
