@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Pods_Export_Pages
+ * Class Pods_Export_Templates
  */
 class Pods_Export_Templates extends Pods_Export_Post_Object {
 

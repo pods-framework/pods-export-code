@@ -7,6 +7,7 @@ jQuery( function ( $ ) {
 	$( '#export-section-pods' ).export_to_code_section( pods_export_pods, null );
 	$( '#export-section-templates' ).export_to_code_section( pods_export_templates, null );
 	$( '#export-section-pages' ).export_to_code_section( pods_export_pages, null );
+	$( '#export-section-helpers' ).export_to_code_section( pods_export_helpers, null );
 
 } );
 
@@ -67,7 +68,7 @@ jQuery( function ( $ ) {
 
 			// Build the checkbox list
 			var $new_item;
-			var list_class;
+			var list_class = '';
 
 			// Items are in { name: label } format
 			for ( var item in items ) {

@@ -99,11 +99,13 @@ class Pods_Export_Code_Admin {
 			$export_pods      = new Pods_Export_Pods();
 			$export_templates = new Pods_Export_Templates();
 			$export_pages     = new Pods_Export_Pages();
+			$export_helpers   = new Pods_Export_Helpers();
 
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', __FILE__ ), array( 'jquery' ), Pods_Export_Code::VERSION );
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pods', $export_pods->get_item_names() );
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_templates', $export_templates->get_item_names() );
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_pages', $export_pages->get_item_names() );
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'pods_export_helpers', $export_helpers->get_item_names() );
 		}
 
 	}
@@ -162,20 +164,23 @@ class Pods_Export_Code_Admin {
 
 		if ( isset( $_POST[ 'pods-export-pods' ] ) ) {
 			$export_object = new Pods_Export_Pods();
-			echo $export_object->export( $_POST[ 'pods-export-pods' ] );
-			die();
+			$items = $_POST[ 'pods-export-pods' ];
 		} elseif ( isset( $_POST[ 'pods-export-templates' ] ) ) {
 			$export_object = new Pods_Export_Templates();
-			echo $export_object->export( $_POST[ 'pods-export-templates' ] );
-			die();
+			$items = $_POST[ 'pods-export-templates' ];
 		} elseif ( isset( $_POST[ 'pods-export-pages' ] ) ) {
 			$export_object = new Pods_Export_Pages();
-			echo $export_object->export( $_POST[ 'pods-export-pages' ] );
-			die();
+			$items = $_POST[ 'pods-export-pages' ];
+		} elseif ( isset( $_POST[ 'pods-export-helpers' ] ) ) {
+			$export_object = new Pods_Export_Helpers();
+			$items = $_POST[ 'pods-export-helpers' ];
 			// No items or an unknown POST key
 		} else {
 			die();
 		}
+
+		echo $export_object->export( $items );
+		die();
 
 	}
 
