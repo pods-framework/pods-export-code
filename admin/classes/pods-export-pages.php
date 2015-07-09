@@ -120,8 +120,9 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 	 */
 	protected function find_pods_page( $starting_dir, $uri ) {
 
-		$uri_segments = explode( '/', $uri );
-		$target       = array_shift( $uri_segments );
+		$uri_segments   = explode( '/', $uri );
+		$target         = array_shift( $uri_segments );
+		$wildcard_match = null;
 
 		// The final segment will be a physical file
 		if ( 0 == count( $uri_segments ) ) {
@@ -133,13 +134,24 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 					continue;
 				}
 
+				// Return exact matches right away
+				if ( $this_file == $target ) {
+					return $this_file;
+				}
+
+				// Check for wildcards as a fallback
 				$this_file_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $this_file ); // Convert wildcards to PCRE
 				if ( preg_match( '/^' . $this_file_pcre . '$/', $target ) ) {
-					return $this_file;
+					$wildcard_match = $this_file;
 				}
 			}
 
-			return null;
+			// No exact match found but maybe there was a wildcard match
+			if ( ! isnull( $wildcard_match ) ) {
+				return $wildcard_match;
+			} else {
+				return null;
+			}
 
 			// This isn't the last segment so it has to match a directory
 		} else {
@@ -149,20 +161,35 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 				return null;
 			}
 
-			$dir_list      = array_map( 'basename', $dir_list ); // Just the subdirectory names
-			$dir_list_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $dir_list ); // Convert wildcards to PCRE
-			foreach ( $dir_list_pcre as $key => $subdirectory ) {
+			$dir_list = array_map( 'basename', $dir_list ); // Just the subdirectory names
+			foreach ( $dir_list as $subdirectory ) {
 
-				if ( preg_match( '/^' . $subdirectory . '$/', $target ) ) {
-					$check_dir = trailingslashit( $starting_dir ) . $dir_list[ $key ];
+				// Favor exact matches
+				if ( $subdirectory == $target ) {
+					$check_dir = trailingslashit( $starting_dir ) . $subdirectory;
+					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
+
+					return trailingslashit( $subdirectory ) . $path;
+				}
+
+				// Check wildcards but stash them as a last resort
+				$subdirectory_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $subdirectory ); // Convert wildcards to PCRE
+				if ( preg_match( '/^' . $subdirectory_pcre . '$/', $target ) ) {
+					$check_dir = trailingslashit( $starting_dir ) . $subdirectory_pcre;
 					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
 					if ( ! is_null( $path ) ) {
-						return trailingslashit( $dir_list[ $key ] ) . $path;
+						$wildcard_match = trailingslashit( $subdirectory_pcre ) . $path;
 					}
 				}
 			}
 
-			return null;
+			// Check for wildcard fall back
+			if ( ! is_null( $wildcard_match ) ) {
+				return $wildcard_match;
+			} else {
+				return null;
+			}
+
 		}
 
 	}
