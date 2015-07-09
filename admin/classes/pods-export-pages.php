@@ -169,7 +169,9 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 					$check_dir = trailingslashit( $starting_dir ) . $subdirectory;
 					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
 
-					return trailingslashit( $subdirectory ) . $path;
+					if ( ! is_null( $path ) ) {
+						return trailingslashit( $subdirectory ) . $path;
+					}
 				}
 
 				// Check wildcards but stash them as a last resort
@@ -177,6 +179,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 				if ( preg_match( '/^' . $subdirectory_pcre . '$/', $target ) ) {
 					$check_dir = trailingslashit( $starting_dir ) . $subdirectory_pcre;
 					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
+
 					if ( ! is_null( $path ) ) {
 						$wildcard_match = trailingslashit( $subdirectory_pcre ) . $path;
 					}
