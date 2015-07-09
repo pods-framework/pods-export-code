@@ -146,13 +146,6 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 				}
 			}
 
-			// No exact match found but maybe there was a wildcard match
-			if ( ! isnull( $wildcard_match ) ) {
-				return $wildcard_match;
-			} else {
-				return null;
-			}
-
 			// This isn't the last segment so it has to match a directory
 		} else {
 
@@ -186,14 +179,10 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 				}
 			}
 
-			// Check for wildcard fall back
-			if ( ! is_null( $wildcard_match ) ) {
-				return $wildcard_match;
-			} else {
-				return null;
-			}
-
 		}
+
+		// Return wildcard fall back if there was one
+		return $wildcard_match;
 
 	}
 
