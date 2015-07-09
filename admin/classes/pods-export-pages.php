@@ -139,7 +139,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 					return $this_file;
 				}
 
-				// Check for wildcards as a fallback
+				// Check for wildcards as a fallback, we'll only fall through and return it if nothing else matches
 				$this_file_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $this_file ); // Convert wildcards to PCRE
 				if ( preg_match( '/^' . $this_file_pcre . '$/', $target ) ) {
 					$wildcard_match = $this_file;
@@ -151,34 +151,39 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 			$dir_list = glob( trailingslashit( $starting_dir ) . '*', GLOB_ONLYDIR ); // Full path of all subdirectories
 			if ( ! is_array( $dir_list ) || 0 >= count( $dir_list ) ) {
-				return null;
+				return null; // No subdirectories exist or something is afoul
 			}
+			$dir_list = array_map( 'basename', $dir_list ); // Trim to just the subdirectory names
 
-			$dir_list = array_map( 'basename', $dir_list ); // Just the subdirectory names
 			foreach ( $dir_list as $subdirectory ) {
 
 				// Favor exact matches
 				if ( $subdirectory == $target ) {
-					$check_dir = trailingslashit( $starting_dir ) . $subdirectory;
-					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
 
+					// Recurse to the next level
+					$next_level = trailingslashit( $starting_dir ) . $subdirectory;
+					$path      = $this->find_pods_page( $next_level, implode( '/', $uri_segments ) );
+
+					// If $path comes back non-null then we've successfully matched the rest of the path recursively
 					if ( ! is_null( $path ) ) {
 						return trailingslashit( $subdirectory ) . $path;
 					}
 				} else {
-					// Check for wildcards matches but stash them as a last resort
+					// Check for wildcards too, but stash them as a last resort
 					$subdirectory_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $subdirectory ); // Convert wildcards to PCRE
 					if ( preg_match( '/^' . $subdirectory_pcre . '$/', $target ) ) {
-						$check_dir = trailingslashit( $starting_dir ) . $subdirectory;
-						$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
 
+						// Recurse to the next level
+						$next_level = trailingslashit( $starting_dir ) . $subdirectory;
+						$path      = $this->find_pods_page( $next_level, implode( '/', $uri_segments ) );
+
+						// If $path comes back non-null then we've successfully matched the rest of the path recursively
 						if ( ! is_null( $path ) ) {
 							$wildcard_match = trailingslashit( $subdirectory ) . $path;
 						}
 					}
 				}
 			}
-
 		}
 
 		// Return wildcard fall back if there was one
