@@ -172,16 +172,16 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 					if ( ! is_null( $path ) ) {
 						return trailingslashit( $subdirectory ) . $path;
 					}
-				}
+				} else {
+					// Check for wildcards matches but stash them as a last resort
+					$subdirectory_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $subdirectory ); // Convert wildcards to PCRE
+					if ( preg_match( '/^' . $subdirectory_pcre . '$/', $target ) ) {
+						$check_dir = trailingslashit( $starting_dir ) . $subdirectory;
+						$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
 
-				// Check wildcards but stash them as a last resort
-				$subdirectory_pcre = str_replace( self::WILDCARD_REPLACEMENT, '(.*)', $subdirectory ); // Convert wildcards to PCRE
-				if ( preg_match( '/^' . $subdirectory_pcre . '$/', $target ) ) {
-					$check_dir = trailingslashit( $starting_dir ) . $subdirectory_pcre;
-					$path      = $this->find_pods_page( $check_dir, implode( '/', $uri_segments ) );
-
-					if ( ! is_null( $path ) ) {
-						$wildcard_match = trailingslashit( $subdirectory_pcre ) . $path;
+						if ( ! is_null( $path ) ) {
+							$wildcard_match = trailingslashit( $subdirectory ) . $path;
+						}
 					}
 				}
 			}
