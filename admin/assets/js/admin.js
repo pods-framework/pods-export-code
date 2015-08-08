@@ -3,7 +3,7 @@
  */
 jQuery( function ( $ ) {
 
-	/*global pods_export_pods, pods_export_templates, pods_export_pages */
+	/*global pods_export_pods, pods_export_templates, pods_export_pages, pods_export_helpers */
 	$( '#export-section-pods' ).export_to_code_section( pods_export_pods, null );
 	$( '#export-section-templates' ).export_to_code_section( pods_export_templates, null );
 	$( '#export-section-pages' ).export_to_code_section( pods_export_pages, null );
@@ -58,7 +58,6 @@ jQuery( function ( $ ) {
 				.append( $( '<div>', { text: 'Output:' } ) )
 				.append( $( '<textarea>', {
 					id: options.id_prefix + 'result-output'
-
 				} )
 			).hide()
 		};
