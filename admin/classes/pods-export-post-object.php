@@ -129,4 +129,39 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 
 	}
 
+	/**
+	 * @param string $content
+	 *
+	 * @return mixed|string
+	 */
+	public function auto_conversions( $content ) {
+
+		$replacements = array(
+			'/\\b[nN][eE][wW]\\s+Pod\\s*\\(/'     => 'pods(',
+			'/\\s*->\\s*get_field\\s*\\(/'        => '->field(',
+			'/\\s*->\\s*findRecords\\s*\\(/'      => '->find(',
+			'/\\s*->\\s*fetchRecord\\s*\\(/'      => '->fetch(',
+			'/\\s*->\\s*get_pod_id\\s*\\(/'       => '->id(',
+			'/\\s*->\\s*getPagination\\s*\\(/'    => '->pagination(',
+			'/\\s*->\\s*getFilters\\s*\\(/'       => '->filters(',
+			'/\\s*->\\s*publicForm\\s*\\(/'       => '->form(',
+			'/\\s*->\\s*getTotalRows\\s*\\(/'     => '->total_found(',
+			'/\\s*->\\s*showTemplate\\s*\\(/'     => '->template(',
+			'/\\b[nN][eE][wW]\\s+PodAPI\\s*\\(/'  => 'pods_api(',
+			'/\\s*->\\s*drop_pod_item\\s*\\(/'    => '->delete_pod_item(',
+			'/\\s*->\\s*drop_pod\\s*\\(/'         => '->delete_pod(',
+			'/\\s*->\\s*drop_column\\s*\\(/'      => '->delete_field(',
+			'/\\s*->\\s*load_column\\s*\\(/'      => '->load_field(',
+			'/\\s*->\\s*save_column\\s*\\(/'      => '->save_field(',
+			'/\\bp\\.created\\b/'                 => 't.created',
+			'/\\bp\\.modified\\b/'                => 't.modified',
+		);
+
+		foreach ( $replacements as $pattern => $replacement ) {
+			$content = preg_replace( $pattern, $replacement, $content );
+		}
+
+		return $content;
+	}
+
 }
