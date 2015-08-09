@@ -132,7 +132,7 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 	/**
 	 * @param string $content
 	 *
-	 * @return mixed|string
+	 * @return string
 	 */
 	public function auto_conversions( $content ) {
 
@@ -162,6 +162,17 @@ class Pods_Export_Post_Object extends Pods_Export_Code_Object {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function change_this_to_object( $content ) {
+
+		return preg_replace( '/\\$this\\s*->\\s*/', '$obj->', $content );
+
 	}
 
 }

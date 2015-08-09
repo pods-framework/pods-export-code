@@ -20,6 +20,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 		parent::__construct( self::POST_TYPE, $export_directory );
 		add_filter( "pods_export_code_post_content{$this->post_type}", array( $this, 'auto_conversions' ) );
+		add_filter( 'pods_export_code_page_precode', array( $this, 'auto_conversions' ) );
 
 	}
 
@@ -52,6 +53,8 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 		}
 		$full_path = trailingslashit( $full_path );
 
+		$precode = apply_filters( 'pods_export_code_page_precode', get_post_meta( $post->ID, 'precode', true ) );
+
 		$object = array(
 			'id'            => null,
 			'uri'           => $post->post_title,
@@ -73,7 +76,7 @@ class Pods_Export_Pages extends Pods_Export_Post_Object {
 
 		// Todo: do something besides blindly ignore errors from put_contents?
 		$wp_filesystem->put_contents( $full_path . $code_filename, $content, FS_CHMOD_FILE );
-		$wp_filesystem->put_contents( $full_path . $precode_filename, $object[ 'precode' ], FS_CHMOD_FILE );
+		$wp_filesystem->put_contents( $full_path . $precode_filename, $precode, FS_CHMOD_FILE );
 		$wp_filesystem->put_contents( $full_path . $object_filename, serialize( $object ), FS_CHMOD_FILE );
 
 	}

@@ -13,6 +13,8 @@ class Pods_Export_Templates extends Pods_Export_Post_Object {
 	public function __construct( $export_directory = 'pods-export-templates' ) {
 
 		parent::__construct( self::POST_TYPE, $export_directory );
+		add_filter( "pods_export_code_post_content{$this->post_type}", array( $this, 'auto_conversions' ) );
+		add_filter( "pods_export_code_post_content{$this->post_type}", array( $this, 'change_this_to_object' ) );
 
 	}
 
