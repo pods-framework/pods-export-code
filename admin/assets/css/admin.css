@@ -15,6 +15,10 @@
 	clear: both;
 }
 
+.stuffbox.pods-export-code .pods-field-option-group {
+	display: block;
+}
+
 .pods-export-code div.pods-manage-field .pods-field-option-group {
 	padding-top: 0;
 }

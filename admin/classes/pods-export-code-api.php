@@ -14,9 +14,7 @@ class Pods_Export_Code_API {
 	 *
 	 */
 	public function __construct() {
-
 		$this->api = pods_api();
-
 	}
 
 	/**
@@ -25,194 +23,114 @@ class Pods_Export_Code_API {
 	 * @return string
 	 */
 	public function export_pod( $pod_name ) {
-
 		$output = '';
 
 		// Attempt to load the pod, don't throw an exception on error
-		$params = array(
-			'name' => $pod_name,
+		$params = [
+			'name'   => $pod_name,
 			'fields' => true,
-		);
+		];
 
 		$pod = $this->api->load_pod( $params, false );
 
 		// Exit if the pod wasn't found or is table based (not supported)
-		if ( false === $pod || !isset( $pod[ 'storage' ] ) || 'table' == $pod[ 'storage' ] ) {
-			return '';
+		if ( false === $pod ) {
+			return 'ERROR: Pod not found.';
+		} elseif ( ! isset( $pod['storage'] ) || 'table' == $pod['storage'] ) {
+			return 'ERROR: Pod storage type not supported.';
 		}
 
-		// Pull out the field list
-		$fields = $pod[ 'fields' ];
-
-		$options_ignore = array(
+		$options_to_remove = [
 			'id',
-			'pod_id',
-			'old_name',
 			'object_type',
-			'object_name',
-			'object_hierarchical',
-			'table',
-			'meta_table',
-			'pod_table',
-			'field_id',
-			'field_index',
-			'field_slug',
-			'field_type',
-			'field_parent',
-			'field_parent_select',
-			'meta_field_id',
-			'meta_field_index',
-			'meta_field_value',
-			'pod_field_id',
-			'pod_field_index',
-			'fields',
-			'object_fields',
-			'join',
-			'where',
-			'where_default',
-			'orderby',
-			'pod',
-			'recurse',
-			'table_info',
-			'attributes',
+			'object_storage_type',
+			'parent',
 			'group',
-			'grouped',
-			'developer_mode',
-			'dependency',
-			'depends-on',
-			'excludes-on'
-		);
+		];
 
-		$empties = array(
-			'description',
-			'alias',
-			'help',
-			'class',
-			'pick_object',
-			'pick_val',
-			'sister_id',
-			'required',
-			'unique',
-			'admin_only',
-			'restrict_role',
-			'restrict_capability',
-			'hidden',
-			'read_only',
-			'object',
-			'label_singular'
-		);
+		$groups = $pod->get_groups();
 
-		$field_types = PodsForm::field_types();
+		$pod = $pod->export( [
+			'include_groups'       => false,
+			'include_group_fields' => false,
+			'include_fields'       => false,
+		] );
 
-		$field_type_options = array();
-
-		foreach ( $field_types as $type => $field_type_data ) {
-			$field_type_options[ $type ] = PodsForm::ui_options( $type );
-		}
-
-		if ( isset( $pod[ 'options' ] ) ) {
-			$pod = array_merge( $pod, $pod[ 'options' ] );
-
-			unset( $pod[ 'options' ] );
-		}
-
-		foreach ( $pod as $option => $option_value ) {
-			if ( in_array( $option, $options_ignore ) || null === $option_value ) {
-				unset( $pod[ $option ] );
-			}
-			elseif ( in_array( $option, $empties ) && ( empty( $option_value ) || '0' == $option_value ) ) {
-				if ( 'restrict_role' == $option && isset( $pod[ 'roles_allowed' ] ) ) {
-					unset( $pod[ 'roles_allowed' ] );
-				}
-				elseif ( 'restrict_capability' == $option && isset( $pod[ 'capabilities_allowed' ] ) ) {
-					unset( $pod[ 'capabilities_allowed' ] );
-				}
-
-				unset( $pod[ $option ] );
+		foreach ( $options_to_remove as $option_to_remove ) {
+			if ( isset( $pod[ $option_to_remove ] ) ) {
+				unset( $pod[ $option_to_remove ] );
 			}
 		}
 
-		if ( !empty( $fields ) ) {
-			foreach ( $fields as &$field ) {
-				if ( isset( $field[ 'options' ] ) ) {
-					$field = array_merge( $field, $field[ 'options' ] );
-
-					unset( $field[ 'options' ] );
-				}
-
-				foreach ( $field as $option => $option_value ) {
-					if ( in_array( $option, $options_ignore ) || null === $option_value ) {
-						unset( $field[ $option ] );
-					}
-					elseif ( in_array( $option, $empties ) && ( empty( $option_value ) || '0' == $option_value ) ) {
-						if ( 'restrict_role' == $option && isset( $field[ 'roles_allowed' ] ) ) {
-							unset( $field[ 'roles_allowed' ] );
-						}
-						elseif ( 'restrict_capability' == $option && isset( $field[ 'capabilities_allowed' ] ) ) {
-							unset( $field[ 'capabilities_allowed' ] );
-						}
-
-						unset( $field[ $option ] );
-					}
-				}
-
-				foreach ( $field_type_options as $type => $options ) {
-					if ( $type == pods_var( 'type', $field ) ) {
-						continue;
-					}
-
-					foreach ( $options as $option_data ) {
-						if ( isset( $option_data[ 'group' ] ) && is_array( $option_data[ 'group' ] ) && !empty( $option_data[ 'group' ] ) ) {
-							if ( isset( $field[ $option_data[ 'name' ] ] ) ) {
-								unset( $field[ $option_data[ 'name' ] ] );
-							}
-
-							foreach ( $option_data[ 'group' ] as $group_option_data ) {
-								if ( isset( $field[ $group_option_data[ 'name' ] ] ) ) {
-									unset( $field[ $group_option_data[ 'name' ] ] );
-								}
-							}
-						}
-						elseif ( isset( $field[ $option_data[ 'name' ] ] ) ) {
-							unset( $field[ $option_data[ 'name' ] ] );
-						}
-					}
-				}
+		foreach ( $pod as $option => $value ) {
+			if ( 0 === (int) $value && 0 === strpos( $option, 'built_in_' ) ) {
+				unset( $pod[ $option ] );
 			}
 		}
 
 		// Output the pods_register_type() call
 		$output .= sprintf( "\t\$pod = %s;\n\n", $this->var_export_format( $pod, 1 ) );
-		$output .= "\tpods_register_type( \$pod[ 'type' ], \$pod[ 'name' ], \$pod );\n\n";
+		$output .= "\tpods_register_type( \$pod['type'], \$pod['name'], \$pod );\n\n";
 
 		// Output a pods_register_field() call for each field
-		foreach ( $fields as $this_field ) {
-			$output .= sprintf( "\t\$field = %s;\n\n", preg_replace( '/\d+ => /', '', $this->var_export_format( $this_field, 1 ) ) );
-			$output .= "\tpods_register_field( \$pod[ 'name' ], \$field[ 'name' ], \$field );\n\n";
+		foreach ( $groups as $group ) {
+			$group_fields = $group->get_fields();
+
+			$group = $group->export( [
+				'include_groups'       => false,
+				'include_group_fields' => false,
+				'include_fields'       => false,
+			] );
+
+			foreach ( $options_to_remove as $option_to_remove ) {
+				if ( isset( $group[ $option_to_remove ] ) ) {
+					unset( $group[ $option_to_remove ] );
+				}
+			}
+
+			$output .= sprintf( "\t\$group = %s;\n\n", $this->var_export_format( $group, 1 ) );
+			$output .= "\tpods_register_field( \$pod['name'], \$group['name'], \$group );\n\n";
+
+			// Output a pods_register_field() call for each field
+			foreach ( $group_fields as $group_field ) {
+				$group_field = $group_field->export( [
+					'include_groups'       => false,
+					'include_group_fields' => false,
+					'include_fields'       => false,
+				] );
+
+				foreach ( $options_to_remove as $option_to_remove ) {
+					if ( isset( $group_field[ $option_to_remove ] ) ) {
+						unset( $group_field[ $option_to_remove ] );
+					}
+				}
+
+				$output .= sprintf( "\t\$group_field = %s;\n\n", $this->var_export_format( $group_field, 1 ) );
+				$output .= "\tpods_register_group_field( \$group_field, \$group['name'], \$pod['name'] );\n\n";
+			}
 		}
 
 		return $output;
-
 	}
 
 	/**
 	 * @param mixed $var
-	 * @param int $leading_tabs
+	 * @param int   $leading_tabs
 	 *
 	 * @return string
 	 */
 	private function var_export_format( $var, $leading_tabs = 0 ) {
-		$var = var_export( $var, true );
+		$var          = var_export( $var, true );
 		$leading_tabs = str_repeat( "\t", $leading_tabs );
 
 		// Convert params like 0 => 'Option 1' to just 'Option 1'
 		$var = preg_replace( '/\d+ => /', '', $var );
 
 		$output = '';
-		foreach( preg_split('~[\r\n]+~', $var ) as $line ){
 
+		foreach ( preg_split( '~[\r\n]+~', $var ) as $line ) {
 			// Skip blank lines
-			if( empty($line) || ctype_space( $line ) ) {
+			if ( empty( $line ) || ctype_space( $line ) ) {
 				continue;
 			}
 
@@ -220,8 +138,15 @@ class Pods_Export_Code_API {
 			$output .= sprintf( "%s%s\n", $leading_tabs, preg_replace( "/ {2}/", "\t", $line ) );
 		}
 
-		// Trim the leading tab and the final newline
-		return ltrim( rtrim( $output, "\n"), "\t" );
+		$output = ltrim( rtrim( $output, "\n" ), "\t" );
+
+		// Trim the leading tab and the final newline.
+		$output = preg_replace( '/\d+ => /', '', $output );
+		$output = preg_replace( '/array \(\n/', "array(\n", $output );
+		$output = preg_replace( '/\n\s*array\(\n/', "array(\n", $output );
+		$output = preg_replace( '/\n\n/', "\n", $output );
+
+		return $output;
 	}
 
 }

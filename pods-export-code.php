@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       Pods Export to Code
- * Plugin URI:        http://pods.io/
+ * Plugin URI:        https://pods.io/
  * Description:       Pods Export to Code
- * Version:           0.9
+ * Version:           0.9.1
  * Author:            Pods Framework Team
- * Author URI:        http://pods.io/about/
+ * Author URI:        https://pods.io/about/
  *
  * Copyright 2013-2014  Pods Foundation, Inc  (email : contact@podsfoundation.org)
  *
@@ -33,13 +33,6 @@ if ( !defined( 'WPINC' ) ) {
  * Public-Facing Functionality
  *----------------------------------------------------------------------------*/
 require_once( plugin_dir_path( __FILE__ ) . 'public/class-pods-export-code.php' );
-
-/*
- * Register hooks that are fired when the plugin is activated or deactivated.
- * When the plugin is deleted, the uninstall.php file is loaded.
- */
-register_activation_hook( __FILE__, array( 'Pods_Export_Code', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'Pods_Export_Code', 'deactivate' ) );
 
 add_action( 'plugins_loaded', array( 'Pods_Export_Code', 'get_instance' ) );
 
