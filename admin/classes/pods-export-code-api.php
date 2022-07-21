@@ -88,8 +88,7 @@ class Pods_Export_Code_API {
 				}
 			}
 
-			$output .= sprintf( "\t\$group = %s;\n\n", $this->var_export_format( $group, 1 ) );
-			$output .= "\tpods_register_group( \$group, \$pod['name'] );\n\n";
+			$group_fields_to_export = [];
 
 			// Output a pods_register_field() call for each field
 			foreach ( $group_fields as $group_field ) {
@@ -105,9 +104,12 @@ class Pods_Export_Code_API {
 					}
 				}
 
-				$output .= sprintf( "\t\$group_field = %s;\n\n", $this->var_export_format( $group_field, 1 ) );
-				$output .= "\tpods_register_group_field( \$group_field, \$group['name'], \$pod['name'] );\n\n";
+				$group_fields_to_export[ $group_field['name'] ] = $group_field;
 			}
+
+			$output .= sprintf( "\t\$group = %s;\n\n", $this->var_export_format( $group, 1 ) );
+			$output .= sprintf( "\t\$group_fields = %s;\n\n", $this->var_export_format( $group_fields_to_export, 1 ) );
+			$output .= "\tpods_register_group( \$group, \$pod['name'], \$group_fields );\n\n";
 		}
 
 		return $output;
